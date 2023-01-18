@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko"
+      layout:decorate="~{layout/default_layout}"
+      xmlns="http://www.w3.org/1999/xhtml" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<main class="border bg-white position-relative" layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center border-bottom bg-secondary px-2 py-1">
+        <button class="btn btn-light" id="disconnect" type="button">나가기</button>
+        <div class="fs-3">WebSocket</div>
+        <div th:text="${session.nickname}">nickname</div>
+    </div>
+    <div class="px-5 py-2" id="message-area">
+    </div>
+    <div class="input-group position-absolute bottom-0 left-0 right-0">
+        <input aria-describedby="button-send" aria-label="Chat Message" class="form-control"
+               id="msg"
+               placeholder="메시지를 입력해주세요" type="text">
+        <button class="btn btn-outline-secondary" id="button-send" type="button">전송</button>
+    </div>
+</main>
+</html>
+<script th:inline="javascript">
+    $(document).ready(function () {
+        $("#disconnect").on("click", () => {
+            location.href = "/";
+        })
+
+        $("#button-send").on("click", () => {
+            send();
+        })
+
+        const websocket = new WebSocket("ws://localhost:8080/ws/chat");
+
+        websocket.onmessage = onMessage;
+        websocket.onopen = onOpen;
+        websocket.onclose = onClose;
+
+        function send() {
+            let msg = $("#msg");
+            websocket.send("전달:" + [[${session.nickname}]] + ":" + msg.val());
+            msg.val("");
+        }
+
+        // 채팅방에서 나갔을 떄
+        function onClose() {
+            const str = "퇴장:" + [[${session.nickname}]] + ":님이 방을 나가셨습니다.";
+            websocket.send(str);
+        }
+
+        // 채팅방에 들어왔을 떄
+        function onOpen() {
+            const str = "입장:" + [[${session.nickname}]] + ":님이 입장하셨습니다.";
+            websocket.send(str);
+        }
+
+        function onMessage(msg) {
+            let data = msg.data;
+            let sessionId;
+            let message;
+            let type;
+            const arr = data.split(":");
+            type = arr[0];
+            sessionId = arr[1];
+            message = arr[2];
+
+            if (type === "입장" || type === "퇴장") {
+                let str = "<div class=\"mt-2\">";
+                str += `<div>${sessionId} ${message}</div>`;
+                str += "</div></div>";
+                $("#message-area").append(str);
+            } else {
+                if (sessionId === [[${session.nickname}]]) {
+                    let str = "<div class=\"mt-2 d-flex justify-content-end\">";
+                    str += "<div class=\"d-flex\">";
+                    str += "<div class=\"align-self-end\">12:11</div>";
+                    str += `<div class=\"bg-body-secondary px-1 py-1 rounded fs-5 ms-2\">${message}</div>`;
+                    str += "</div></div>";
+                    $("#message-area").append(str);
+                } else {
+                    let str = "<div class=\"mt-2\">";
+                    str += `<div>${sessionId}</div>`;
+                    str += "<div class=\"d-flex\">";
+                    str += `<div class=\"bg-body-secondary px-1 py-1 rounded fs-5\">${message}</div>`;
+                    str += "<div class=\"align-self-end ms-2\">12:12</div>";
+                    str += "</div></div>";
+                    $("#message-area").append(str);
+                }
+            }
+        }
+    })
+</script>

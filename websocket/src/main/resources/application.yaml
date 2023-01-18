@@ -1,0 +1,12 @@
+spring:
+  # 정적 리소스에 변화가 있을 떄 바로 반영
+  devtools:
+    livereload:
+      enabled: true
+  # thymeleaf 참조 경로
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+
+
+
