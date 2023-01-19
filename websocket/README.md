@@ -1,12 +1,12 @@
 # Websocket
 
-## 프로젝트 설명
+## :pencil: 프로젝트 설명
 
 웹소켓을 사용한 간단한 채팅 프로그램이다.
 
 ---
 
-## 프로젝트 기획 의도
+## :dart: 프로젝트 기획 의도
 
 현재 인턴을 하는 회사에서 `jsp`를 이용한다. 하지만 나는 그동안 리액트를 이용해 프론트엔드를 구축해 개발을 진행해왔다. 이번 기회를 통해 프론트를 별도로 분리하지 않고 개발하는 법에 대해 공부해 보기로
 했다. `jsp`를 이용해 구축하려 했지만, `springboot`에서는 `thymeleaf` 템플릿 엔진을 권장하기 때문에 `thymeleaf`를 이용해 뷰를 구현하기로
@@ -15,13 +15,13 @@
 
 ---
 
-## 기능
+## :gift: 기능
 
-### 로그인 화면
+### :white_check_mark: 로그인 화면
 
 <img src="https://user-images.githubusercontent.com/76946536/213326473-d7f3bd43-6055-43c3-9dad-e47932bac654.png" height="500" alt="로그인화면"/>
 
-### 1대1 채팅 화면
+### :white_check_mark: 1대1 채팅 화면
 
 <table>
 <tr>
@@ -32,7 +32,7 @@
 </tr>
 </table>
 
-### 단체 채팅 화면
+### :white_check_mark: 단체 채팅 화면
 
 <table>
 <tr>
@@ -53,13 +53,13 @@
 
 ---
 
-## 학습 내용 및 코드 분석
+## :green_book: 학습 내용 및 코드 분석
 
 ### :star:  [HttpSession](https://github.com/woong99/Note/blob/master/Spring%2BSpringBoot/HttpSession.md)
 
 ### :star:  [WebSocket](https://github.com/woong99/Note/blob/master/Spring%2BSpringBoot/WebSocket.md)
 
-### 라이브러리 추가
+### :star: 라이브러리 추가
 
 ```gradle
 // build.gradle
@@ -79,7 +79,7 @@ dependencies {
 }
 ```
 
-### WebSocket Handler
+### :star: WebSocket Handler
 
 - 소켓통신은 **서버와 클라이언트가 1:N의 관계**를 맺는다. 즉, 하나의 서버에 다수 클라이언트가 접속할 수 있다.
     - 서버는 다수의 클라이언트가 보낸 메세지를 처리할 핸들러가 필요하다.
@@ -136,7 +136,7 @@ public class ChatHandler extends TextWebSocketHandler {
 > - 데이터를 전송할 때, Header와 메타 데이터, 에러 체크 비트 등과 같은 다양한 요소들을 함께 보내 데이터 전송 효율과 안정성을 높히게 된다.
 > - 이때, 보내고자 하는 데이터 자체를 의미하는 것이 페이로드이다.
 
-### WebSocket Config
+### :star: WebSocket Config
 
 - 핸들러를 이용해 WebSocket을 활성화하기 위한 Config를 작성한다.
 - WebSocket에 접속하기 위한 Endpoint는 `/chat`으로 설정
@@ -174,7 +174,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
 > <figcaption >출처: https://velog.io/@kho5420/Web-API-%EA%B7%B8%EB%A6%AC%EA%B3%A0-EndPoint</figcaption>
 > </figure>
 
-### ChatController
+### :star: ChatController
 
 ```java
 package com.example.woong99.websocket.controller;
@@ -207,7 +207,7 @@ public class ChatController {
 
 ```
 
-### JS
+### :star: JS
 
 ```javascript
 <script th:inline="javascript">
@@ -285,7 +285,7 @@ public class ChatController {
 
 ---
 
-## 결론
+## :exclamation: 결론
 
 - 채팅방이 단 하나이다.
 - 웹소켓을 지원하지 않는 브라우저에서는 동작하지 않을 것이다.
@@ -297,6 +297,6 @@ public class ChatController {
 
 ---
 
-## 참고자료
+## :bell: 참고자료
 
 - https://dev-gorany.tistory.com/212
