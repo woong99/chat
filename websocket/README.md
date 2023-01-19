@@ -19,7 +19,7 @@
 
 ### 로그인 화면
 
-<img src="https://user-images.githubusercontent.com/76946536/213326473-d7f3bd43-6055-43c3-9dad-e47932bac654.png" height="400" alt="로그인화면"/>
+<img src="https://user-images.githubusercontent.com/76946536/213326473-d7f3bd43-6055-43c3-9dad-e47932bac654.png" height="500" alt="로그인화면"/>
 
 ### 1대1 채팅 화면
 
