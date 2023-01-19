@@ -27,9 +27,9 @@
 
 <table>
 <tr>
-<td><img src="https://user-images.githubusercontent.com/76946536/213327016-7186b2f2-2080-406c-8018-58ce140549d5.png" alt="1대1 채팅화면"/>
+<td><img src="https://user-images.githubusercontent.com/76946536/213327016-7186b2f2-2080-406c-8018-58ce140549d5.png" height="400" alt="1대1 채팅화면"/>
 </td>
-<td><img src="https://user-images.githubusercontent.com/76946536/213327024-ab8ba448-6f00-441c-8d90-2b3cf0116fce.png" alt="1대1 채팅화면"/>
+<td><img src="https://user-images.githubusercontent.com/76946536/213327024-ab8ba448-6f00-441c-8d90-2b3cf0116fce.png" height="400" alt="1대1 채팅화면"/>
 </td>
 </tr>
 </table>
