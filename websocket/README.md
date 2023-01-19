@@ -25,14 +25,33 @@
 
 #### 1대1 채팅 화면
 
-<img src="https://user-images.githubusercontent.com/76946536/213327016-7186b2f2-2080-406c-8018-58ce140549d5.png" height="400" alt="1대1 채팅화면"/>
-<img src="https://user-images.githubusercontent.com/76946536/213327024-ab8ba448-6f00-441c-8d90-2b3cf0116fce.png" height="400" alt="1대1 채팅화면"/>
+<table>
+<tr>
+<td><img src="https://user-images.githubusercontent.com/76946536/213327016-7186b2f2-2080-406c-8018-58ce140549d5.png" alt="1대1 채팅화면"/>
+</td>
+<td><img src="https://user-images.githubusercontent.com/76946536/213327024-ab8ba448-6f00-441c-8d90-2b3cf0116fce.png" alt="1대1 채팅화면"/>
+</td>
+</tr>
+</table>
 
 #### 단체 채팅 화면
 
-<img src="https://user-images.githubusercontent.com/76946536/213327593-e0f07d17-b2b6-4e85-848a-b4020e065f43.png" height="400" alt="1대1 채팅화면"/>
-<img src="https://user-images.githubusercontent.com/76946536/213327599-f9aef4d7-7e94-4373-9c95-62a8851a2083.png" height="400" alt="1대1 채팅화면"/>
-<img src="https://user-images.githubusercontent.com/76946536/213327601-aeb7515b-53c8-42c5-9a10-bffd5fd15704.png" height="400" alt="1대1 채팅화면"/>
+<table>
+<tr>
+<td>
+<img src="https://user-images.githubusercontent.com/76946536/213327593-e0f07d17-b2b6-4e85-848a-b4020e065f43.png"  alt="1대1 채팅화면"/>
+
+</td>
+<td>
+<img src="https://user-images.githubusercontent.com/76946536/213327599-f9aef4d7-7e94-4373-9c95-62a8851a2083.png"  alt="1대1 채팅화면"/>
+
+</td>
+<td>
+<img src="https://user-images.githubusercontent.com/76946536/213327601-aeb7515b-53c8-42c5-9a10-bffd5fd15704.png"  alt="1대1 채팅화면"/>
+
+</td>
+</tr>
+</table>
 
 ---
 
