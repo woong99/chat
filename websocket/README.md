@@ -55,8 +55,9 @@
 
 ## 학습 내용 및 코드 분석
 
-- [HttpSession](https://github.com/woong99/Note/blob/master/Spring%2BSpringBoot/HttpSession.md)
-- [WebSocket](https://github.com/woong99/Note/blob/master/Spring%2BSpringBoot/WebSocket.md)
+### :star:  [HttpSession](https://github.com/woong99/Note/blob/master/Spring%2BSpringBoot/HttpSession.md)
+
+### :star:  [WebSocket](https://github.com/woong99/Note/blob/master/Spring%2BSpringBoot/WebSocket.md)
 
 ### 라이브러리 추가
 
