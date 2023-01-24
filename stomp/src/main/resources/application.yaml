@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/stomp
+    username: woong
+    password: Jhan00254!
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+jwt:
+  secret: b6f3313821955d6c0042d4f2675f02fff0e66847ff1adb33b34a2ef12ba740a502b06743a33e2daeab666426e314b7b5a96052dc3d797214f8a6a0a2e087957e
+
