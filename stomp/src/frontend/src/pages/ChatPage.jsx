@@ -1,29 +1,43 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Button, Form } from "react-bootstrap";
-import { useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
-import ChatMessage from "../components/ChatMessage";
+import React, { useEffect, useRef, useState } from 'react';
+import { Button, Form } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
+import ChatMessage from '../components/ChatMessage';
+import { addSubscription, removeSubscription } from '../redux/modules/stomp';
 
 const ChatPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [chatList, setChatList] = useState([]);
   const subscription = useRef();
-  const [chat, setChat] = useState("");
+  const [chat, setChat] = useState('');
   const client = useSelector((state) => state.stomp.client);
   const userNickname = useSelector((state) => state.auth.user.nickname);
-
+  const subscriptions = useSelector((state) => state.stomp.subscriptions);
+  console.log(chatList);
   useEffect(() => {
-    console.log(client);
-    if (client !== undefined && client !== "") {
+    if (
+      client !== undefined &&
+      client !== '' &&
+      subscriptions.findIndex((item) => item.roomId === location.search.substring(9)) === -1
+    ) {
       subscription.current = client.current?.subscribe(
-        `/sub/chat/room/${location.search}`,
+        `/sub/chat/room/${location.search.substring(9)}`,
         (body) => {
           const json_body = JSON.parse(body.body);
           console.log(json_body);
           setChatList((_chat_list) => [..._chat_list, json_body]);
-        }
+        },
       );
+      if (subscription.current) {
+        dispatch(
+          addSubscription({
+            roomId: location.search.substring(9),
+            subscription: subscription.current,
+          }),
+        );
+      }
     }
   }, [client]);
 
@@ -33,22 +47,48 @@ const ChatPage = () => {
     }
 
     client.current.publish({
-      destination: "/pub/chat/message",
+      destination: '/pub/chat/message',
       body: JSON.stringify({
-        roomId: location.search,
+        roomId: location.search.substring(9),
         message: chat,
       }),
     });
-    setChat("");
+    setChat('');
   };
   const onBack = () => {
-    navigate("/public-chat-room");
+    navigate('/public-chat-room');
   };
   const onCloseSubscribe = () => {
-    console.log(subscription.current);
-    subscription.current.unsubscribe();
-    console.log(subscription.current);
-    navigate("/public-chat-room");
+    if (subscription.current === undefined || subscription.current === '') {
+      const index = subscriptions.findIndex((item) => item.roomId === location.search.substring(9));
+      if (index !== -1) {
+        subscriptions[index].subscription.unsubscribe();
+        const subscriptionInfo = {
+          roomId: location.search.substring(9),
+          subscription: subscriptions[index].subscription,
+        };
+        dispatch(removeSubscription(subscriptionInfo));
+      }
+    } else {
+      subscription.current.unsubscribe();
+      dispatch(
+        removeSubscription({
+          roomId: location.search.substring(9),
+          subscription: subscription.current,
+        }),
+      );
+    }
+    navigate('/public-chat-room');
+  };
+
+  const onKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      onPublish();
+    }
+  };
+
+  const onPublish = () => {
+    publish(chat);
   };
   return (
     <div className="layout position-relative">
@@ -62,12 +102,12 @@ const ChatPage = () => {
         </Button>
       </div>
       <div>
-        {chatList?.map((chat) => (
+        {chatList?.map((chat, index) => (
           <ChatMessage
             message={chat.message}
             writer={chat.writer}
             senderNickname={userNickname}
-            key={chat.message}
+            key={index}
           />
         ))}
       </div>
@@ -77,12 +117,9 @@ const ChatPage = () => {
           placeholder="내용을 입력해주세요."
           value={chat}
           onChange={(e) => setChat(e.target.value)}
+          onKeyDown={onKeyPress}
         />
-        <Button
-          variant="primary"
-          className="w-100"
-          onClick={() => publish(chat)}
-        >
+        <Button variant="primary" className="w-100" onClick={onPublish}>
           전송
         </Button>
       </div>
