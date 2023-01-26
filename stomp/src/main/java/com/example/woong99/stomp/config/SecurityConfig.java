@@ -12,6 +12,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsUtils;
 
 @Configuration
 @EnableWebSecurity
@@ -32,11 +33,14 @@ public class SecurityConfig {
                 .accessDeniedHandler(jwtAccessDeniedHandler)
                 .and()
                 .authorizeHttpRequests()
+                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .requestMatchers("/members/login").permitAll()
                 .requestMatchers("/members/signup").permitAll()
-                .requestMatchers("/members/me").permitAll()
-                .requestMatchers("/public-room").permitAll()
+                .requestMatchers("/members/me").authenticated()
+                .requestMatchers("/public-room").authenticated()
+                .requestMatchers("/ws/**").permitAll()
                 .anyRequest().authenticated()
+//                .anyRequest().permitAll()
                 .and()
                 .apply(new JwtSecurityConfig(jwtTokenProvider));
         return http.build();

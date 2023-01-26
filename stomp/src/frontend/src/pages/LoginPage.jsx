@@ -1,19 +1,23 @@
-import React, { useState } from 'react';
-import { Form, Button } from 'react-bootstrap';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { login } from '../redux/modules/auth';
+import React, { useState } from "react";
+import { Form, Button } from "react-bootstrap";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import useStomp from "../hooks/useStomp";
+import { login } from "../redux/modules/auth";
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const onSignup = () => {
-    navigate('/signup');
+    navigate("/signup");
   };
-  const onLogin = () => {
-    dispatch(login({ email, password })).then(navigate('/'));
+  const onLogin = async () => {
+    const res = await dispatch(login({ email, password }));
+    if (res.payload) {
+      navigate("/connect-stomp");
+    }
   };
   return (
     <div className="layout">
@@ -39,7 +43,11 @@ const LoginPage = () => {
           />
         </Form.Group>
 
-        <Button variant="primary" className="w-100 mt-5 fs-5" onClick={onSignup}>
+        <Button
+          variant="primary"
+          className="w-100 mt-5 fs-5"
+          onClick={onSignup}
+        >
           회원가입
         </Button>
         <Button variant="primary" className="w-100 mt-3 fs-5" onClick={onLogin}>
