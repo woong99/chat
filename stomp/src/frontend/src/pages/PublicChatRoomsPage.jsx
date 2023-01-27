@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Form, Button, Card } from "react-bootstrap";
+import { Form, Button, Card, Badge } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -9,6 +9,7 @@ const PublicChatRoomsPage = () => {
   const user = useSelector((state) => state.auth.user);
   const [roomName, setRoomName] = useState("");
   const [publicChatRooms, setPublicChatRooms] = useState();
+  const subscriptions = useSelector((state) => state.stomp.subscriptions);
   const onChatPage = (roomId, roomName) => {
     navigate(`/chat?room-id=${roomId}`, { state: { roomName } });
   };
@@ -52,7 +53,16 @@ const PublicChatRoomsPage = () => {
               className="mt-3"
               onClick={() => onChatPage(room.roomId, room.name)}
             >
-              <Card.Body>{room.name}</Card.Body>
+              <Card.Body className="position-relative">
+                {room.name}
+                {subscriptions.findIndex(
+                  (item) => item.roomId === room.roomId
+                ) !== -1 && (
+                  <Badge bg="primary" className="position-absolute end-0 me-4">
+                    구독중
+                  </Badge>
+                )}
+              </Card.Body>
             </Card>
           ))}
       </div>

@@ -10,7 +10,6 @@ const ConnectStompPage = () => {
   const client = useRef({});
   const [connect, disconnect] = useStomp(client, "");
   useEffect(() => {
-    console.log("커넥트 페이지");
     connect();
     dispatch(saveStomp(client));
     navigate("/");

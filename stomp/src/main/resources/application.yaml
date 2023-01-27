@@ -3,10 +3,10 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/stomp?useSSL=false&useUnicode=true&characterEncoding=utf8
     username: root
-    # mac
-    password: Jhan00254!
+      # mac
+      #    password: Jhan00254!
     # window
-    # password :
+    password:
   jpa:
     show-sql: true
     hibernate:
