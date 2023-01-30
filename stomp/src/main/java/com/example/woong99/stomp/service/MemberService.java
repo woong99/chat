@@ -1,6 +1,7 @@
 package com.example.woong99.stomp.service;
 
 import com.example.woong99.stomp.dto.LoginRequestDto;
+import com.example.woong99.stomp.dto.MemberResponseDto;
 import com.example.woong99.stomp.dto.SignUpRequestDto;
 import com.example.woong99.stomp.dto.TokenDto;
 import com.example.woong99.stomp.entity.Member;
@@ -14,6 +15,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Service
 @Slf4j
@@ -40,5 +45,9 @@ public class MemberService {
         Member member = signUpRequestDto.toMember(passwordEncoder);
         log.info("member : {}", member);
         memberRepository.save(member);
+    }
+
+    public List<MemberResponseDto> getAllMembers() {
+        return memberRepository.findAll().stream().map(MemberResponseDto::ofNickname).collect(Collectors.toList());
     }
 }

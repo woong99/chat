@@ -22,4 +22,12 @@ public class MemberResponseDto {
                 .nickname(member.getNickname())
                 .build();
     }
+
+    public static MemberResponseDto ofNickname(Member member) {
+        return MemberResponseDto.builder()
+                .id(member.getId())
+                .nickname(member.getNickname())
+                .email("")
+                .build();
+    }
 }

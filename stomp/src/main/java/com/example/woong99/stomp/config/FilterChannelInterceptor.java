@@ -5,7 +5,6 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SecurityException;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
@@ -20,25 +19,21 @@ import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 @RequiredArgsConstructor
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
 @Slf4j
 public class FilterChannelInterceptor implements ChannelInterceptor {
     private final JwtTokenProvider jwtTokenProvider;
-    private int count = 0;
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor headerAccessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
         assert headerAccessor != null;
 
-        if (StompCommand.CONNECT.equals(headerAccessor.getCommand())) {
-            count++;
-            log.info("count : {}", count);
-        }
-
-        if (!StompCommand.UNSUBSCRIBE.equals(headerAccessor.getCommand())) {
+        if (!StompCommand.UNSUBSCRIBE.equals(headerAccessor.getCommand()) && !StompCommand.DISCONNECT.equals(headerAccessor.getCommand())) {
             String authorizationHeader = String.valueOf(headerAccessor.getNativeHeader("Authorization"));
             if (authorizationHeader == null || authorizationHeader.equals("null")) {
                 throw new MessageDeliveryException("로그인 후 이용해주세요.");

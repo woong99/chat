@@ -8,7 +8,7 @@ const ConnectStompPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const client = useRef({});
-  const [connect, disconnect] = useStomp(client, "");
+  const [connect, disconnect] = useStomp(client, "/sub/notice");
   useEffect(() => {
     connect();
     dispatch(saveStomp(client));

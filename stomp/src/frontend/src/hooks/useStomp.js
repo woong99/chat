@@ -1,15 +1,17 @@
-import { Client } from '@stomp/stompjs';
-import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import SockJS from 'sockjs-client';
+import { Client } from "@stomp/stompjs";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import SockJS from "sockjs-client";
+import { addChatMessage, addNotice } from "../redux/modules/stomp";
 
 const useStomp = (client, destination) => {
-  const token = useSelector((state) => state.auth.token);
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
+  const headers = { Authorization: `Bearer ${token}` };
   const connect = () => {
     client.current = new Client({
-      brokerURL: 'ws://localhost:8080/ws',
+      brokerURL: "ws://localhost:8080/ws",
       // webSocketFactory: () =>
       //   new SockJS(
       //     "http://localhost:8080/ws",
@@ -21,14 +23,29 @@ const useStomp = (client, destination) => {
       heartbeatIncoming: 16000,
       heartbeatOutgoing: 16000,
       onConnect: () => {
-        console.log('STOMP 연결완료');
-        if (destination !== undefined && destination !== '') {
-          client.current?.subscribe(destination);
+        console.log("STOMP 연결완료");
+        if (destination !== undefined && destination !== "") {
+          client.current?.subscribe(
+            destination,
+            (body) => {
+              const json_body = JSON.parse(body.body);
+              dispatch(addNotice(json_body));
+            },
+            headers
+          );
+          client.current?.subscribe(
+            "/sub/private",
+            (body) => {
+              const json_body = JSON.parse(body.body);
+              dispatch(addChatMessage(json_body));
+            },
+            headers
+          );
         }
       },
       onStompError: (err) => {
         alert(err.headers.message);
-        navigate('/login');
+        navigate("/login");
         console.log(err);
       },
       debug: (msg) => {
