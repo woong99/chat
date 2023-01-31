@@ -6,6 +6,7 @@ const stompSlice = createSlice({
     client: "",
     subscriptions: [],
     messages: [],
+    privateMessages: [],
     connectingUsers: "",
   },
   reducers: {
@@ -58,6 +59,9 @@ const stompSlice = createSlice({
     addNotice: (state, action) => {
       state.connectingUsers = action.payload;
     },
+    addPrivateMessages: (state, action) => {
+      state.privateMessages = [...state.privateMessages, action.payload];
+    },
   },
 });
 
@@ -68,5 +72,6 @@ export const {
   addChatMessage,
   setIsEnter,
   addNotice,
+  addPrivateMessages,
 } = stompSlice.actions;
 export default stompSlice;

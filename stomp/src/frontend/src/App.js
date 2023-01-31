@@ -9,6 +9,7 @@ import PrivateRoute from "./PrivateRoute";
 import PublicChatRoomsPage from "./pages/PublicChatRoomsPage";
 import ConnectStompPage from "./pages/ConnectStompPage";
 import FriendsPage from "./pages/FriendsPage";
+import PrivateChatPage from "./pages/PrivateChatPage";
 
 function App() {
   const accessToken = useSelector((state) => state.auth.token);
@@ -37,6 +38,12 @@ function App() {
           path="/chat"
           element={
             <PrivateRoute token={accessToken} component={<ChatPage />} />
+          }
+        />
+        <Route
+          path="/private-chat"
+          element={
+            <PrivateRoute token={accessToken} component={<PrivateChatPage />} />
           }
         />
         <Route

@@ -1,6 +1,10 @@
 package com.example.woong99.stomp.controller;
 
 import com.example.woong99.stomp.dto.ChatMessageDto;
+import com.example.woong99.stomp.entity.ChatMessage;
+import com.example.woong99.stomp.entity.PrivateChatRoom;
+import com.example.woong99.stomp.repository.ChatMessageRepository;
+import com.example.woong99.stomp.repository.PrivateChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -22,6 +26,8 @@ public class StompChatController {
     private final SimpMessagingTemplate template;
     private final HashMap<String, String> simpSessionIdMap = new HashMap<>();
     private final String noticeDestination = "/sub/notice";
+    private final PrivateChatRoomRepository privateChatRoomRepository;
+    private final ChatMessageRepository chatMessageRepository;
 
     @MessageMapping(value = "/chat/enter")
     public void enter(ChatMessageDto message, Principal principal) {
@@ -41,6 +47,9 @@ public class StompChatController {
     @MessageMapping("/private")
     public void privateMessage(ChatMessageDto message, Principal principal) {
         message.setWriter(principal.getName());
+        PrivateChatRoom privateChatRoom = privateChatRoomRepository.findAllById(message.getRoomId());
+        ChatMessage chatMessage = ChatMessage.toEntity(message, privateChatRoom);
+        chatMessageRepository.save(chatMessage);
         template.convertAndSendToUser(message.getReceiver(), "/sub/private", message);
     }
 

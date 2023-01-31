@@ -1,11 +1,13 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Badge, Button, Card } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { addPrivateMessages } from "../redux/modules/stomp";
 
 const FriendsPage = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [users, setUsers] = useState([]);
   const connectingUsers = useSelector((state) => state.stomp.connectingUsers);
   const userNickname = useSelector((state) => state.auth.user.nickname);
@@ -14,6 +16,23 @@ const FriendsPage = () => {
   };
   const onChat = (nickname) => {
     console.log("nickname", nickname);
+    axios
+      .post("http://localhost:8080/private-room", {
+        memberOne: userNickname,
+        memberTwo: nickname,
+      })
+      .then((res) => {
+        if (res.data.messages.length > 0) {
+          dispatch(addPrivateMessages(res.data.messages));
+          navigate(`/private-chat?room-id=${res.data.roomId}`, {
+            state: { nickname },
+          });
+        } else {
+          navigate(`/private-chat?room-id=${res.data.roomId}`, {
+            state: { nickname },
+          });
+        }
+      });
   };
   useEffect(() => {
     axios
