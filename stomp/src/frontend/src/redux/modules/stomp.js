@@ -60,7 +60,16 @@ const stompSlice = createSlice({
       state.connectingUsers = action.payload;
     },
     addPrivateMessages: (state, action) => {
-      state.privateMessages = [...state.privateMessages, action.payload];
+      if (action.payload.length > 1) {
+        state.privateMessages = [...state.privateMessages, ...action.payload];
+      } else {
+        state.privateMessages = [...state.privateMessages, action.payload];
+      }
+    },
+    removePrivateMessages: (state, action) => {
+      state.privateMessages = state.privateMessages.filter(
+        (item) => item.roomId !== action.payload
+      );
     },
   },
 });
@@ -73,5 +82,6 @@ export const {
   setIsEnter,
   addNotice,
   addPrivateMessages,
+  removePrivateMessages,
 } = stompSlice.actions;
 export default stompSlice;

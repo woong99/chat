@@ -21,6 +21,7 @@ body {
 .layout {
   width: 450px;
   height: 600px;
+  max-height: 600px;
   border: 1px solid black;
   padding-left: 30px;
   padding-right: 30px;
@@ -36,4 +37,8 @@ body {
   width: fit-content;
   padding: 5px;
   background-color: #e2e3e5;
+}
+
+.messages-container {
+  max-height: 500px;
 }

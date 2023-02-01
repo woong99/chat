@@ -1,8 +1,14 @@
 import { Client } from "@stomp/stompjs";
+import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import SockJS from "sockjs-client";
-import { addChatMessage, addNotice } from "../redux/modules/stomp";
+import {
+  addChatMessage,
+  addNotice,
+  addPrivateMessages,
+  removePrivateMessages,
+} from "../redux/modules/stomp";
 
 const useStomp = (client, destination) => {
   const navigate = useNavigate();
@@ -34,10 +40,22 @@ const useStomp = (client, destination) => {
             headers
           );
           client.current?.subscribe(
-            "/sub/private",
+            "/user/sub/private",
             (body) => {
               const json_body = JSON.parse(body.body);
-              dispatch(addChatMessage(json_body));
+              if (json_body.command === "MESSAGE") {
+                dispatch(addPrivateMessages(json_body));
+              } else if (json_body.command === "ENTER") {
+                axios
+                  .post("http://localhost:8080/private-room/message-list", {
+                    roomId: json_body.roomId,
+                  })
+                  .then((res) => {
+                    console.log(res);
+                    dispatch(removePrivateMessages(json_body.roomId));
+                    dispatch(addPrivateMessages(res.data));
+                  });
+              }
             },
             headers
           );

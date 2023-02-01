@@ -1,6 +1,6 @@
 import React from "react";
 
-const ChatMessage = ({ message, writer, senderNickname }) => {
+const ChatMessage = ({ message, writer, senderNickname, isRead }) => {
   return (
     <div
       className={`d-flex ${
@@ -14,6 +14,7 @@ const ChatMessage = ({ message, writer, senderNickname }) => {
       >
         <div className="border-end border-dark pe-1">{writer}</div>
         <div className="ps-1">{message}</div>
+        <div>{isRead === "N" && 1}</div>
       </div>
     </div>
   );

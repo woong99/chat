@@ -1,8 +1,10 @@
+import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import ChatMessage from "../components/ChatMessage";
+import { addPrivateMessages } from "../redux/modules/stomp";
 
 const PrivateChatPage = () => {
   const location = useLocation();
@@ -10,13 +12,49 @@ const PrivateChatPage = () => {
   const dispatch = useDispatch();
   const subscription = useRef();
   const [chat, setChat] = useState("");
+  // const [chatList, setChatList] = useState([]);
   const client = useSelector((state) => state.stomp.client);
   const userNickname = useSelector((state) => state.auth.user.nickname);
   const token = useSelector((state) => state.auth.token);
-
   const chatList = useSelector((state) => state.stomp.privateMessages);
   const headers = { Authorization: `Bearer ${token}` };
-
+  const roomId = location.search.substring(9);
+  console.log("chatList", chatList);
+  useEffect(() => {
+    let clientRefValue = null;
+    if (client.current) {
+      client.current.publish({
+        destination: "/pub/private",
+        headers,
+        body: JSON.stringify({
+          roomId,
+          writer: "",
+          receiver: location.state.nickname,
+          message: "",
+          command: "ENTER",
+          isRead: "",
+        }),
+      });
+      clientRefValue = client.current;
+    }
+    axios
+      .post("http://localhost:8080/private-room/message-list", { roomId })
+      .then((res) => dispatch(addPrivateMessages(res.data)));
+    return () => {
+      clientRefValue.publish({
+        destination: "/pub/private",
+        headers,
+        body: JSON.stringify({
+          roomId: location.search.substring(9),
+          writer: "",
+          receiver: location.state.nickname,
+          message: "",
+          command: "OUT",
+          isRead: "",
+        }),
+      });
+    };
+  }, []);
   const publish = (chat) => {
     if (!client.current.connected) {
       return;
@@ -26,16 +64,19 @@ const PrivateChatPage = () => {
       destination: "/pub/private",
       headers,
       body: JSON.stringify({
-        roomId: location.search.substring(9),
+        roomId,
+        writer: "",
         receiver: location.state.nickname,
         message: chat,
+        isRead: "N",
+        command: "MESSAGE",
       }),
     });
     setChat("");
   };
 
   const onBack = () => {
-    navigate("/public-chat-room");
+    navigate("/friends");
   };
   const onKeyPress = (e) => {
     if (e.key === "Enter") {
@@ -55,14 +96,15 @@ const PrivateChatPage = () => {
         {location.state.nickname}
         <Button className="ms-4">채팅방 나가기</Button>
       </div>
-      <div>
+      <div className="overflow-scroll messages-container">
         {chatList?.map(
           (chat, index) =>
-            chat.roomId === location.search.substring(9) && (
+            chat.roomId === roomId && (
               <ChatMessage
                 message={chat.message}
                 writer={chat.writer}
                 senderNickname={userNickname}
+                isRead={chat.isRead}
                 key={index}
               />
             )

@@ -4,7 +4,11 @@ import com.example.woong99.stomp.dto.ChatMessageDto;
 import com.example.woong99.stomp.entity.ChatMessage;
 import com.example.woong99.stomp.entity.PrivateChatRoom;
 import com.example.woong99.stomp.repository.ChatMessageRepository;
+import com.example.woong99.stomp.repository.MemberRepository;
+import com.example.woong99.stomp.repository.PrivateChatRoomConnectMemberRepository;
 import com.example.woong99.stomp.repository.PrivateChatRoomRepository;
+import com.example.woong99.stomp.service.ChatMessageService;
+import com.example.woong99.stomp.service.PrivateChatRoomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -27,7 +31,11 @@ public class StompChatController {
     private final HashMap<String, String> simpSessionIdMap = new HashMap<>();
     private final String noticeDestination = "/sub/notice";
     private final PrivateChatRoomRepository privateChatRoomRepository;
+    private final PrivateChatRoomConnectMemberRepository privateChatRoomConnectMemberRepository;
     private final ChatMessageRepository chatMessageRepository;
+    private final MemberRepository memberRepository;
+    private final PrivateChatRoomService privateChatRoomService;
+    private final ChatMessageService chatMessageService;
 
     @MessageMapping(value = "/chat/enter")
     public void enter(ChatMessageDto message, Principal principal) {
@@ -46,11 +54,23 @@ public class StompChatController {
 
     @MessageMapping("/private")
     public void privateMessage(ChatMessageDto message, Principal principal) {
+        log.info("message : {}", message);
         message.setWriter(principal.getName());
         PrivateChatRoom privateChatRoom = privateChatRoomRepository.findAllById(message.getRoomId());
         ChatMessage chatMessage = ChatMessage.toEntity(message, privateChatRoom);
-        chatMessageRepository.save(chatMessage);
-        template.convertAndSendToUser(message.getReceiver(), "/sub/private", message);
+
+        if (message.getCommand().equals("ENTER")) {
+            privateChatRoomService.updateIsEnter(message.getCommand(), principal.getName());
+            chatMessageService.updateIsRead(message.getReceiver(), privateChatRoom);
+            template.convertAndSendToUser(message.getReceiver(), "/sub/private", message);
+        } else if (message.getCommand().equals("OUT")) {
+            privateChatRoomService.updateIsEnter(message.getCommand(), principal.getName());
+            template.convertAndSendToUser(message.getReceiver(), "/sub/private", message);
+        } else {
+            chatMessageRepository.save(chatMessage);
+            template.convertAndSendToUser(message.getReceiver(), "/sub/private", message);
+            template.convertAndSendToUser(message.getWriter(), "/sub/private", message);
+        }
     }
 
     @EventListener

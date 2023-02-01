@@ -22,4 +22,8 @@ public class PrivateChatRoomConnectMember {
     @ManyToOne
     @JoinColumn(name = "stomp_private_chat_room")
     private PrivateChatRoom privateChatRoom;
+
+    @Column(nullable = false, name = "stomp_private_chat_room_connect_member_is_enter")
+    @Setter
+    private String isEnter;
 }

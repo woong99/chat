@@ -36,17 +36,25 @@ public class PrivateChatRoomService {
             privateChatRoomRepository.save(privateChatRoom);
             Member memberOne = memberRepository.findByNickname(privateChatRoomRequestDto.getMemberOne()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
             Member memberTwo = memberRepository.findByNickname(privateChatRoomRequestDto.getMemberTwo()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-            PrivateChatRoomConnectMember newPrivateChatRoomConnectMember1 = PrivateChatRoomConnectMember.builder().member(memberOne).privateChatRoom(privateChatRoom).build();
-            PrivateChatRoomConnectMember newPrivateChatRoomConnectMember2 = PrivateChatRoomConnectMember.builder().member(memberTwo).privateChatRoom(privateChatRoom).build();
+            PrivateChatRoomConnectMember newPrivateChatRoomConnectMember1 = PrivateChatRoomConnectMember.builder().member(memberOne).isEnter("OUT").privateChatRoom(privateChatRoom).build();
+            PrivateChatRoomConnectMember newPrivateChatRoomConnectMember2 = PrivateChatRoomConnectMember.builder().member(memberTwo).isEnter("OUT").privateChatRoom(privateChatRoom).build();
             privateChatRoomConnectMemberRepository.save(newPrivateChatRoomConnectMember1);
             privateChatRoomConnectMemberRepository.save(newPrivateChatRoomConnectMember2);
             return PrivateChatRoomResponseDto.builder().roomId(roomId).build();
         } else {
             List<ChatMessage> messageList = privateChatRoomConnectMember.getPrivateChatRoom().getMessageList();
+            log.info("messageList : {}", messageList);
             return PrivateChatRoomResponseDto.builder()
                     .roomId(privateChatRoomConnectMember.getPrivateChatRoom().getId())
                     .messages(messageList)
                     .build();
         }
+    }
+
+    public void updateIsEnter(String command, String nickname) {
+        Member member = memberRepository.findByNickname(nickname).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+        PrivateChatRoomConnectMember privateChatRoomConnectMember = privateChatRoomConnectMemberRepository.findPrivateChatRoomConnectMemberByMember(member);
+        privateChatRoomConnectMember.setIsEnter(command);
+        privateChatRoomConnectMemberRepository.save(privateChatRoomConnectMember);
     }
 }

@@ -22,16 +22,10 @@ const FriendsPage = () => {
         memberTwo: nickname,
       })
       .then((res) => {
-        if (res.data.messages.length > 0) {
-          dispatch(addPrivateMessages(res.data.messages));
-          navigate(`/private-chat?room-id=${res.data.roomId}`, {
-            state: { nickname },
-          });
-        } else {
-          navigate(`/private-chat?room-id=${res.data.roomId}`, {
-            state: { nickname },
-          });
-        }
+        console.log(res);
+        navigate(`/private-chat?room-id=${res.data.roomId}`, {
+          state: { nickname },
+        });
       });
   };
   useEffect(() => {

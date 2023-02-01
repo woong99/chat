@@ -16,8 +16,8 @@ public class PrivateChatRoomConnectMemberRepositoryImpl implements PrivateChatRo
     @Override
     public PrivateChatRoomConnectMember findPrivateChatRoomByUsers(PrivateChatRoomRequestDto privateChatRoomRequestDto) {
         return jpaQueryFactory
-                .selectFrom(privateChatRoomConnectMember1)
-                .join(privateChatRoomConnectMember2)
+                .selectFrom(privateChatRoomConnectMember2)
+                .join(privateChatRoomConnectMember1)
                 .on(privateChatRoomConnectMember1.privateChatRoom.eq(privateChatRoomConnectMember2.privateChatRoom))
                 .where(privateChatRoomConnectMember1.member.nickname.eq(privateChatRoomRequestDto.getMemberOne())
                         .and(privateChatRoomConnectMember2.member.nickname.eq(privateChatRoomRequestDto.getMemberTwo())))

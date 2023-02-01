@@ -24,6 +24,9 @@ public class ChatMessage {
     @Column(nullable = false, updatable = false, name = "stomp_chat_message_sender")
     private String sender;
 
+    @Column(nullable = false, name = "stomp_chat_message_is_read")
+    private String isRead;
+
     @ManyToOne
     @JoinColumn(name = "stomp_private_chat_room_id")
     private PrivateChatRoom privateChatRoom;
@@ -33,6 +36,7 @@ public class ChatMessage {
                 .message(chatMessageDto.getMessage())
                 .sender(chatMessageDto.getWriter())
                 .privateChatRoom(privateChatRoom)
+                .isRead(chatMessageDto.getIsRead())
                 .build();
     }
 }
