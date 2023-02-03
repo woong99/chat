@@ -7,6 +7,7 @@ const stompSlice = createSlice({
     subscriptions: [],
     messages: [],
     privateMessages: [],
+    enterUsers: [],
     connectingUsers: "",
   },
   reducers: {
@@ -71,6 +72,16 @@ const stompSlice = createSlice({
         (item) => item.roomId !== action.payload
       );
     },
+    addEnterUser: (state, action) => {
+      state.enterUsers = [...state.enterUsers, action.payload];
+    },
+    removeEnterUser: (state, action) => {
+      state.enterUsers = state.enterUsers.filter(
+        (item) =>
+          item.roomId !== action.payload.roomId &&
+          item.user !== action.payload.user
+      );
+    },
   },
 });
 
@@ -83,5 +94,7 @@ export const {
   addNotice,
   addPrivateMessages,
   removePrivateMessages,
+  addEnterUser,
+  removeEnterUser,
 } = stompSlice.actions;
 export default stompSlice;

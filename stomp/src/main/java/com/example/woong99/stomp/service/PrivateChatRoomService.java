@@ -28,8 +28,6 @@ public class PrivateChatRoomService {
 
     public PrivateChatRoomResponseDto getPrivateChatRoom(PrivateChatRoomRequestDto privateChatRoomRequestDto) {
         PrivateChatRoomConnectMember privateChatRoomConnectMember = privateChatRoomConnectMemberRepository.findPrivateChatRoomByUsers(privateChatRoomRequestDto);
-        log.info("privateChatRoomConnectMember : {}", privateChatRoomConnectMember);
-
         if (privateChatRoomConnectMember == null) {
             String roomId = UUID.randomUUID().toString();
             PrivateChatRoom privateChatRoom = PrivateChatRoom.builder().id(roomId).build();
@@ -47,13 +45,15 @@ public class PrivateChatRoomService {
             return PrivateChatRoomResponseDto.builder()
                     .roomId(privateChatRoomConnectMember.getPrivateChatRoom().getId())
                     .messages(messageList)
+                    .isEnter(privateChatRoomConnectMember.getIsEnter())
                     .build();
         }
     }
 
-    public void updateIsEnter(String command, String nickname) {
+    public void updateIsEnter(String command, String roomId, String nickname) {
         Member member = memberRepository.findByNickname(nickname).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-        PrivateChatRoomConnectMember privateChatRoomConnectMember = privateChatRoomConnectMemberRepository.findPrivateChatRoomConnectMemberByMember(member);
+        PrivateChatRoom privateChatRoom = privateChatRoomRepository.findAllById(roomId);
+        PrivateChatRoomConnectMember privateChatRoomConnectMember = privateChatRoomConnectMemberRepository.findPrivateChatRoomConnectMemberByMemberAndPrivateChatRoom(member, privateChatRoom);
         privateChatRoomConnectMember.setIsEnter(command);
         privateChatRoomConnectMemberRepository.save(privateChatRoomConnectMember);
     }

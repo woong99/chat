@@ -11,4 +11,5 @@ import java.util.List;
 public class PrivateChatRoomResponseDto {
     private String roomId;
     private List<ChatMessage> messages;
+    private String isEnter;
 }

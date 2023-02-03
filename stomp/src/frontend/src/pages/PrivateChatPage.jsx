@@ -11,15 +11,18 @@ const PrivateChatPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const subscription = useRef();
+  const scrollRef = useRef();
   const [chat, setChat] = useState("");
   // const [chatList, setChatList] = useState([]);
   const client = useSelector((state) => state.stomp.client);
   const userNickname = useSelector((state) => state.auth.user.nickname);
   const token = useSelector((state) => state.auth.token);
   const chatList = useSelector((state) => state.stomp.privateMessages);
+  const enterUsers = useSelector((state) => state.stomp.enterUsers);
   const headers = { Authorization: `Bearer ${token}` };
   const roomId = location.search.substring(9);
   console.log("chatList", chatList);
+  console.log("enterUsers", enterUsers);
   useEffect(() => {
     let clientRefValue = null;
     if (client.current) {
@@ -37,9 +40,9 @@ const PrivateChatPage = () => {
       });
       clientRefValue = client.current;
     }
-    axios
-      .post("http://localhost:8080/private-room/message-list", { roomId })
-      .then((res) => dispatch(addPrivateMessages(res.data)));
+    // axios
+    //   .post("http://localhost:8080/private-room/message-list", { roomId })
+    //   .then((res) => dispatch(addPrivateMessages(res.data)));
     return () => {
       clientRefValue.publish({
         destination: "/pub/private",
@@ -55,6 +58,10 @@ const PrivateChatPage = () => {
       });
     };
   }, []);
+
+  useEffect(() => {
+    scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  }, [chatList]);
   const publish = (chat) => {
     if (!client.current.connected) {
       return;
@@ -68,7 +75,12 @@ const PrivateChatPage = () => {
         writer: "",
         receiver: location.state.nickname,
         message: chat,
-        isRead: "N",
+        isRead:
+          enterUsers.findIndex(
+            (e) => e.roomId === roomId && e.user === location.state.nickname
+          ) !== -1
+            ? "Y"
+            : "N",
         command: "MESSAGE",
       }),
     });
@@ -96,7 +108,7 @@ const PrivateChatPage = () => {
         {location.state.nickname}
         <Button className="ms-4">채팅방 나가기</Button>
       </div>
-      <div className="overflow-scroll messages-container">
+      <div className="messages-container" ref={scrollRef}>
         {chatList?.map(
           (chat, index) =>
             chat.roomId === roomId && (

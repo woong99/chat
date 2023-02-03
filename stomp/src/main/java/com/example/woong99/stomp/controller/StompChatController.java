@@ -5,7 +5,6 @@ import com.example.woong99.stomp.entity.ChatMessage;
 import com.example.woong99.stomp.entity.PrivateChatRoom;
 import com.example.woong99.stomp.repository.ChatMessageRepository;
 import com.example.woong99.stomp.repository.MemberRepository;
-import com.example.woong99.stomp.repository.PrivateChatRoomConnectMemberRepository;
 import com.example.woong99.stomp.repository.PrivateChatRoomRepository;
 import com.example.woong99.stomp.service.ChatMessageService;
 import com.example.woong99.stomp.service.PrivateChatRoomService;
@@ -28,10 +27,9 @@ import java.util.HashMap;
 @Slf4j
 public class StompChatController {
     private final SimpMessagingTemplate template;
-    private final HashMap<String, String> simpSessionIdMap = new HashMap<>();
+    private final HashMap<String, String> simpSessionIdMap = new HashMap<>();   // stomp에 CONNECT한 유저 정보
     private final String noticeDestination = "/sub/notice";
     private final PrivateChatRoomRepository privateChatRoomRepository;
-    private final PrivateChatRoomConnectMemberRepository privateChatRoomConnectMemberRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final MemberRepository memberRepository;
     private final PrivateChatRoomService privateChatRoomService;
@@ -60,16 +58,26 @@ public class StompChatController {
         ChatMessage chatMessage = ChatMessage.toEntity(message, privateChatRoom);
 
         if (message.getCommand().equals("ENTER")) {
-            privateChatRoomService.updateIsEnter(message.getCommand(), principal.getName());
+            privateChatRoomService.updateIsEnter(message.getCommand(), message.getRoomId(), principal.getName());
             chatMessageService.updateIsRead(message.getReceiver(), privateChatRoom);
             template.convertAndSendToUser(message.getReceiver(), "/sub/private", message);
+            template.convertAndSendToUser(message.getWriter(), "/sub/private", message);
         } else if (message.getCommand().equals("OUT")) {
-            privateChatRoomService.updateIsEnter(message.getCommand(), principal.getName());
+            privateChatRoomService.updateIsEnter(message.getCommand(), message.getRoomId(), principal.getName());
             template.convertAndSendToUser(message.getReceiver(), "/sub/private", message);
+            template.convertAndSendToUser(message.getWriter(), "/sub/private", message);
         } else {
             chatMessageRepository.save(chatMessage);
             template.convertAndSendToUser(message.getReceiver(), "/sub/private", message);
             template.convertAndSendToUser(message.getWriter(), "/sub/private", message);
+        }
+    }
+
+    @MessageMapping("/notice")
+    public void noticeMessage(ChatMessageDto chatMessageDto) {
+        if (chatMessageDto.getCommand().equals("SUBSCRIBE")) {
+            log.info("/notice");
+            template.convertAndSend(noticeDestination, simpSessionIdMap.values());
         }
     }
 

@@ -14,8 +14,8 @@ const ChatMessage = ({ message, writer, senderNickname, isRead }) => {
       >
         <div className="border-end border-dark pe-1">{writer}</div>
         <div className="ps-1">{message}</div>
-        <div>{isRead === "N" && 1}</div>
       </div>
+      <div>{isRead === "N" && 1}</div>
     </div>
   );
 };

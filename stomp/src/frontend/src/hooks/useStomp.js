@@ -5,8 +5,10 @@ import { useNavigate } from "react-router-dom";
 import SockJS from "sockjs-client";
 import {
   addChatMessage,
+  addEnterUser,
   addNotice,
   addPrivateMessages,
+  removeEnterUser,
   removePrivateMessages,
 } from "../redux/modules/stomp";
 
@@ -43,6 +45,7 @@ const useStomp = (client, destination) => {
             "/user/sub/private",
             (body) => {
               const json_body = JSON.parse(body.body);
+              console.log(json_body);
               if (json_body.command === "MESSAGE") {
                 dispatch(addPrivateMessages(json_body));
               } else if (json_body.command === "ENTER") {
@@ -55,6 +58,19 @@ const useStomp = (client, destination) => {
                     dispatch(removePrivateMessages(json_body.roomId));
                     dispatch(addPrivateMessages(res.data));
                   });
+                dispatch(
+                  addEnterUser({
+                    roomId: json_body.roomId,
+                    user: json_body.writer,
+                  })
+                );
+              } else if (json_body.command === "OUT") {
+                dispatch(
+                  removeEnterUser({
+                    roomId: json_body.roomId,
+                    user: json_body.writer,
+                  })
+                );
               }
             },
             headers
